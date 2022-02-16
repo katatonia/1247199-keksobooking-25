@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Polina Milekhina](https://up.htmlacademy.ru/javascript/25/user/1247199).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Быков](https://htmlacademy.ru/profile/id618225).
 
 ---
 
