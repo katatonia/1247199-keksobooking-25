@@ -32,15 +32,8 @@ const getAvatarNumber = () => {
 };
 
 const getRandomArray = (array) => {
-  const copiedArray = array.slice();
-  const randomArrayLength = getRandomInt(1, array.length);
-  const randomArray = new Array (randomArrayLength);
-
-  for (let i = 0; i < randomArrayLength; i++) {
-    const randomArrayElement = getRandomArrayElement(copiedArray);
-    randomArray.push(randomArrayElement);
-  }
-
+  const newArray = new Array (getRandomInt(1, array.length)).fill(' ').map(() => (getRandomArrayElement(array)));
+  const randomArray = [...new Set (newArray)];
   return randomArray;
 };
 
