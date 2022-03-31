@@ -1,6 +1,4 @@
-import { createObjList } from './data.js';
-
-const objList = createObjList();
+import { objList } from './data.js';
 
 const housingTypes = {
   palace: 'Дворец',
@@ -36,9 +34,8 @@ const cardTemplate = document.querySelector('#card')
   .content
   .querySelector('.popup');
 
-const cardFragment = document.createDocumentFragment();
-
-objList.forEach(({offer: {title, address, price, type, rooms, guests, checkin, checkout, features, description, photos}, author: {avatar}}) => {
+const createCard = (({offer: {title, address, price, type, rooms, guests, checkin, checkout, features, description, photos}, author: {avatar}}) => {
+  const cardFragment = document.createDocumentFragment();
   const cardElement = cardTemplate.cloneNode(true);
   cardElement.querySelector('.popup__title').textContent = title;
   cardElement.querySelector('.popup__text--address').textContent = address;
@@ -59,7 +56,8 @@ objList.forEach(({offer: {title, address, price, type, rooms, guests, checkin, c
   cardElement.querySelector('.popup__avatar').src = avatar;
 
   cardFragment.appendChild(cardElement);
+  const mapCanvas = document.querySelector('#map-canvas');
+  mapCanvas.appendChild(cardFragment);
 });
 
-const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.appendChild(cardFragment);
+createCard(objList[0]);

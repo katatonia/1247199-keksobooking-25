@@ -92,5 +92,6 @@ const createObj = () => {
 };
 
 const createObjList = () => Array.from({length: OBJ_COUNT}, createObj);
+const objList = createObjList();
 
-export { createObjList };
+export { objList };
