@@ -30,12 +30,12 @@ const checkoutList = [
 ];
 
 const featuresList = [
-  'wifi',
-  'dishwasher',
-  'parking',
-  'washer',
-  'elevator',
-  'conditioner'
+  'WiFi',
+  'Dishwasher',
+  'Parking',
+  'Washer',
+  'Elevator',
+  'Conditioner'
 ];
 
 const descriptions = [
