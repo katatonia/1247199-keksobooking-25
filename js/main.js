@@ -1,4 +1,4 @@
 import './util.js';
-import { createObjList } from './data.js';
-
-console.log(createObjList());
+import './data.js';
+import './card.js';
+import './form.js';

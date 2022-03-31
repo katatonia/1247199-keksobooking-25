@@ -30,12 +30,12 @@ const checkoutList = [
 ];
 
 const featuresList = [
-  'wifi',
-  'dishwasher',
-  'parking',
-  'washer',
-  'elevator',
-  'conditioner'
+  'WiFi',
+  'Dishwasher',
+  'Parking',
+  'Washer',
+  'Elevator',
+  'Conditioner'
 ];
 
 const descriptions = [
@@ -92,5 +92,6 @@ const createObj = () => {
 };
 
 const createObjList = () => Array.from({length: OBJ_COUNT}, createObj);
+const objList = createObjList();
 
-export { createObjList };
+export { objList };
