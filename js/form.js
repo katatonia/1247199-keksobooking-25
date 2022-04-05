@@ -38,4 +38,19 @@ const activePage = () => {
 
 activePage();
 
+const pristine = new Pristine(adForm, {
+  classTo: '#title',
+});
+
+const validateTitle = function (value) {
+  return value.length >= 30 && value.length <= 100;
+};
+
+pristine.addValidator(adForm.querySelector('#title'), validateTitle, 'Ошибка');
+
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  pristine.validate();
+});
+
 export { disabledPage, activePage };
