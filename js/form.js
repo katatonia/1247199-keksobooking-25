@@ -3,7 +3,7 @@ const fieldsets = adForm.querySelectorAll('fieldset');
 const mapFilters = document.querySelector('.map__filters');
 const mapFiltersElements = mapFilters.children;
 
-const isDisabled = (array) => {
+const setElementDisabled = (array) => {
   array.forEach((element) => {
     if (element.disabled === false) {
       element.disabled = true;
@@ -14,26 +14,28 @@ const isDisabled = (array) => {
   return array;
 };
 
+// Заблокированное состояние страницы
 const disabledPage = () => {
   adForm.classList.add('ad-form--disabled');
   mapFilters.classList.add('map-filters--disabled');
 
-  isDisabled(fieldsets);
+  setElementDisabled(fieldsets);
 
   const mapFiltersArray = Array.from(mapFiltersElements);
-  isDisabled(mapFiltersArray);
+  setElementDisabled(mapFiltersArray);
 };
 
 disabledPage();
 
+// Активное состояние страницы
 const activePage = () => {
   adForm.classList.remove('ad-form--disabled');
   mapFilters.classList.remove('map-filters--disabled');
 
-  isDisabled(fieldsets);
+  setElementDisabled(fieldsets);
 
   const mapFiltersArray = Array.from(mapFiltersElements);
-  isDisabled(mapFiltersArray);
+  setElementDisabled(mapFiltersArray);
 };
 
 activePage();
@@ -42,6 +44,7 @@ activePage();
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorTextParent: 'ad-form__element',
+  errorTextClass: 'ad-form__error',
 });
 
 const validateTitle = function (value) {
@@ -114,16 +117,32 @@ const validateRooms = () => {
   adForm.reportValidity();
 };
 
-roomNumber.addEventListener('change', () => {
-  validateRooms();
-  pristine.validate(capacity);
-});
+const roomNumberValidator = () => {
+  roomNumber.addEventListener('change', () => {
+    validateRooms();
+    pristine.validate(capacity);
+  });
+};
+const capacityValidator = () => {
+  capacity.addEventListener('change', () => {
+    validateRooms();
+    pristine.validate(roomNumber);
+  });
+};
 
-capacity.addEventListener('change', () => {
-  validateRooms();
-  pristine.validate(roomNumber);
-});
+pristine.addValidator(
+  roomNumber,
+  roomNumberValidator,
+  'Количество комнат должно соответствовать количеству гостей'
+);
 
+pristine.addValidator(
+  capacity,
+  capacityValidator,
+  'Количество гостей должно соответствовать количеству комнат'
+);
+
+// Отправка формы
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   pristine.validate();
