@@ -9,9 +9,18 @@ const CENTER_TOKYO = {
 };
 const zoomMap = 12;
 
+// Передаёт координаты метки в поле адреса
+const addressForm = adForm.querySelector('#address');
+const updateAddress = (location) => {
+  const lat = location.lat.toFixed(5);
+  const lng = location.lng.toFixed(5);
+  addressForm.value = `${lat} ${lng}`;
+};
+
 //Создание карты
 const map = L.map('map-canvas')
   .on('load', () => {
+    updateAddress(CENTER_TOKYO);
     activePage();
   })
   .setView(CENTER_TOKYO, zoomMap);
@@ -55,7 +64,7 @@ const getResetForm = () => {
 
 resetButton.addEventListener('click', getResetForm);
 
-// Добавляет новые метки
+//Добавляет новые метки
 objList.forEach(({location: {lat, lng}}) => {
   const marker = L.marker({
     lat,
