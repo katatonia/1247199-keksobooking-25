@@ -1,5 +1,3 @@
-import { objList } from './data.js';
-
 const housingTypes = {
   palace: 'Дворец',
   house: 'Дом',
@@ -60,4 +58,4 @@ const createCard = (({offer: {title, address, price, type, rooms, guests, checki
   mapCanvas.appendChild(cardFragment);
 });
 
-createCard(objList[0]);
+export { createCard };

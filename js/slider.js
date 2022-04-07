@@ -8,7 +8,7 @@ noUiSlider.create(sliderElement, {
     min: 0,
     max: 100000,
   },
-  start: 0,
+  start: 5000,
   step: 1,
   connect: 'lower',
   format: {
@@ -27,5 +27,3 @@ sliderElement.noUiSlider.on('update', () => {
 
 price.addEventListener('change', () => sliderElement.noUiSlider.set(price.value));
 type.addEventListener('change', () => sliderElement.noUiSlider.set(price.placeholder));
-
-export { sliderElement };
