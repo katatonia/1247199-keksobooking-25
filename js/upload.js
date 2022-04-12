@@ -14,7 +14,7 @@ const photoPreviewForm = adForm.querySelector('.ad-form__photo');
 let img = photoPreviewForm.querySelector('img');
 if (!img) {
   img = document.createElement('img');
-  img.classList.add('test');
+  img.classList.add('photo-img');
   photoPreviewForm.append(img);
 }
 
@@ -42,7 +42,7 @@ renderPhoto(photoForm, img);
 
 const resetPictures = () => {
   avatarPreviewForm.src = IMG_DEFAULT.SRC;
-  img.src = IMG_DEFAULT.SRC;
+  img.src = '';
 };
 
 export {

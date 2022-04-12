@@ -1058,3 +1058,8 @@ fieldset {
 .hidden {
   display: none;
 }
+
+.photo-img {
+  max-width: 70px;
+  max-height: 70px;
+}

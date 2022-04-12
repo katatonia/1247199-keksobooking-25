@@ -70,6 +70,7 @@ roomNumber.addEventListener ('change', () => {
 const resetForm = () => {
   const form = document.querySelector('.ad-form');
   form.reset();
+  onChangeOfferType();
 };
 
 const getResetPage = () => {
@@ -80,7 +81,9 @@ const getResetPage = () => {
 
 // Сброс по клику на кнопку
 const resetBtn = document.querySelector('.ad-form__reset');
-resetBtn.addEventListener('click', () => {
+resetBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+
   getResetPage();
 });
 
