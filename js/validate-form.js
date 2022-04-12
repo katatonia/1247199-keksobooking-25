@@ -26,12 +26,13 @@ const MinPrices = {
   'house': 5000,
   'palace': 10000
 };
+
 const validatePrice = function (value) {
   return MinPrices[type.value] <= (value.length && parseInt(value, 10)) && (value.length && parseInt(value, 10)) <= 100000;
 };
 
 const onChangeOfferType = function () {
-  price.placeholder = MinPrices[this.value];
+  price.placeholder = MinPrices[type.value];
 };
 
 pristine.addValidator(price, validatePrice);

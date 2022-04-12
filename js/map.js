@@ -64,12 +64,26 @@ const getResetForm = () => {
 
 resetButton.addEventListener('click', getResetForm);
 
+// Меняет иконку меток
+const pinIcon = L.icon({
+  iconUrl: './img/pin.svg',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
+
 //Добавляет новые метки
 objList.forEach(({location: {lat, lng}}) => {
-  const marker = L.marker({
-    lat,
-    lng,
-  });
+  const marker = L.marker(
+    {
+      lat,
+      lng,
+    },
+    {
+      icon: pinIcon,
+    },
+  );
 
-  marker.addTo(map);
+  marker
+    .addTo(map)
+    .bindPopup();
 });

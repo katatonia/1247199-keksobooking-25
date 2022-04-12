@@ -6,7 +6,7 @@ const getRandomInt = (min, max) => {
   }
 };
 
-const getRandomFloat = (min, max, fraction = 1) => {
+const getRandomFloat = (min, max, fraction = 5) => {
   if (max <= min) {
     throw new Error('Неверный диапазон. Максимальное число не может быть меньше или равно минимальному.');
   }
