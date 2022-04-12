@@ -1,7 +1,10 @@
+import { debounce, showAlert } from './util.js';
 import { activePage } from './form.js';
 import { housingTypes, renderPhotos} from './card.js';
 import { getData } from './server.js';
+import { resetPictures } from './upload.js';
 
+const MAX_POINTS = 10;
 const adForm = document.querySelector('.ad-form');
 const CENTER_TOKYO = {
   lat: 35.69034,
@@ -74,7 +77,6 @@ const pinIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-
 const createPopup = (point) => {
   const popup = document.querySelector('#card').content.querySelector('.popup');
   const popupElement = popup.cloneNode(true);
@@ -103,34 +105,119 @@ const createPopup = (point) => {
 };
 
 //Добавляет новые метки
-getData((data) => {
-  data.forEach((item) => {
-    const {lat, lng} = item.location;
-    const marker = L.marker(
-      {
-        lat,
-        lng,
-      },
-      {
-        icon: pinIcon,
-      },
-    );
+const markers = [];
+const allMapData = [];
+const currentMapData = [];
 
-    marker
-      .addTo(map)
-      .bindPopup(createPopup(item));
+const submitFilters = (compFunc = () => true) => {
+  markers.forEach((item) => map.removeLayer(item));
+  markers.splice(0, markers.length);
+
+  currentMapData.filter(compFunc)
+    .slice(0, MAX_POINTS)
+    .forEach((item) => {
+      const { lat, lng } = item.location;
+      const marker = L.marker(
+        {
+          lat,
+          lng,
+        },
+        {
+          icon: pinIcon,
+        },
+      );
+
+      marker
+        .addTo(map)
+        .bindPopup(createPopup(item));
+      markers.push(marker);
+    });
+};
+
+const debouncedSubmitFilters = debounce(submitFilters, 500);
+
+getData((data) => {
+  data.forEach((item) => allMapData.push(item));
+  currentMapData.push(...allMapData);
+  submitFilters();
+}, showAlert);
+
+// Фильтрация меток на карте
+const housingTypeFilter = document.getElementById('housing-type');
+housingTypeFilter.addEventListener('change', (e) => {
+  const { value } = e.target;
+  debouncedSubmitFilters((item) => value === 'any' || item.offer.type === value);
+});
+
+const housingPriceFilter = document.getElementById('housing-price');
+housingPriceFilter.addEventListener('change', (e) => {
+  const { value } = e.target;
+  const prices = {
+    'high': (p) => p >= 50000,
+    'middle': (p) => p >= 10000 && p <= 50000,
+    'low': (p) => p <= 10000,
+  };
+  debouncedSubmitFilters((item) => {
+    if (value === 'any') {
+      return true;
+    }
+    return prices[value](item.offer.price);
+  });
+});
+
+const housingRoomsFilter = document.getElementById('housing-rooms');
+housingRoomsFilter.addEventListener('change', (e) => {
+  const { value } = e.target;
+  debouncedSubmitFilters((item) => value === 'any' || item.offer.rooms === +value);
+});
+
+const housingGuestsFilter = document.getElementById('housing-guests');
+housingGuestsFilter.addEventListener('change', (e) => {
+  const { value } = e.target;
+  debouncedSubmitFilters((item) => value === 'any' || item.offer.guests === +value);
+});
+
+const featureFilters = {
+  'wifi': false,
+  'dishwasher': false,
+  'parking': false,
+  'washer': false,
+  'elevator': false,
+  'conditioner': false,
+};
+
+const housingFeaturesFilters = document.querySelectorAll('#housing-features input');
+housingFeaturesFilters.forEach((filter) => {
+  filter.addEventListener('click', (e) => {
+    const { value, checked } = e.target;
+
+    featureFilters[value] = checked;
+    const checkedFilters = Object.entries(featureFilters).filter(([, v]) => v).map(([k]) => k);
+    debouncedSubmitFilters((item) => {
+      if (!checkedFilters.length) {
+        return true;
+      }
+      if (!item.offer.features || !item.offer.features.length) {
+        return false;
+      }
+      return checkedFilters.every((elem) => item.offer.features.indexOf(elem) >= 0);
+    });
   });
 });
 
 const resetFilters = () => {
   const form = document.querySelector('.map__filters');
   form.reset();
+  Object.keys(featureFilters).forEach((key) => { featureFilters[key] = false; });
+  debouncedSubmitFilters();
+  resetPictures();
 };
 
 const resetMap = () => {
   map.setView(CENTER_TOKYO, 12);
   mainPin.setLatLng(CENTER_TOKYO);
   map.closePopup();
+  resetPictures();
 };
 
 export { resetFilters, resetMap };

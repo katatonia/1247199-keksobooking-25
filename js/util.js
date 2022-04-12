@@ -57,4 +57,12 @@ const unblockSubmitBtn = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitBtn, unblockSubmitBtn };
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitBtn, unblockSubmitBtn, debounce };

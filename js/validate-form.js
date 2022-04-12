@@ -78,11 +78,10 @@ const getResetPage = () => {
   resetMap();
 };
 
-
+// Сброс по клику на кнопку
 const resetBtn = document.querySelector('.ad-form__reset');
 resetBtn.addEventListener('click', () => {
-  resetForm();
-  resetMap();
+  getResetPage();
 });
 
 // Отправка формы
