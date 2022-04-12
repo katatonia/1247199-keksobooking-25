@@ -40,4 +40,4 @@ const showErrorPopup = () => {
   });
 };
 
-export {showSuccessPopup, showErrorPopup};
+export { showSuccessPopup, showErrorPopup };

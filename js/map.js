@@ -1,6 +1,8 @@
 import { activePage } from './form.js';
 import { objList } from './data.js';
 import { housingTypes, renderPhotos} from './card.js';
+import { getData } from './server.js';
+import { showAlert } from './util.js';
 
 const adForm = document.querySelector('.ad-form');
 const CENTER_TOKYO = {
@@ -30,7 +32,7 @@ L.tileLayer(
   {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
-);
+).addTo(map);
 
 // Меняет иконку главной метки
 const mainPinIcon = L.icon({
@@ -116,3 +118,17 @@ objList.forEach((item) => {
     .addTo(map)
     .bindPopup(createPopup(item));
 });
+
+// Сбрасывает страницу
+// const getResetPage = () => {
+//   mainPin.setLatLng(CENTER_TOKYO);
+//   map.setView(CENTER_TOKYO, 12);
+//   adForm.reset();
+//   const adFormInputs = adForm.querySelectorAll('input');
+//   adFormInputs.forEach((input) => input.textContent = '');
+//   const resetMainPinMarker = mainPin.getLatLng();
+//   getAddressCoordinates(resetMainPinMarker);
+//   onTypeChange();
+//   mapFilters.reset();
+//   clearMarker();
+// };

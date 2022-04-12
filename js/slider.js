@@ -1,6 +1,5 @@
 const adForm = document.querySelector('.ad-form');
 const price = adForm.querySelector('#price');
-const type= adForm.querySelector('#type');
 const sliderElement = adForm.querySelector('.ad-form__slider');
 
 noUiSlider.create(sliderElement, {
@@ -26,4 +25,3 @@ sliderElement.noUiSlider.on('update', () => {
 });
 
 price.addEventListener('change', () => sliderElement.noUiSlider.set(price.value));
-type.addEventListener('change', () => sliderElement.noUiSlider.set(price.placeholder));

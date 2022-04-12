@@ -1,3 +1,6 @@
+//import { blockSubmitBtn, unblockSubmitBtn } from "./util";
+import { sendData, getData } from "./server";
+
 const adForm = document.querySelector('.ad-form');
 
 // Валидация заголовка
@@ -32,7 +35,8 @@ const validatePrice = function (value) {
 };
 
 const onChangeOfferType = function () {
-  price.placeholder = MinPrices[type.value];
+  price.value = MinPrices[type.value];
+  price.dispatchEvent(new Event('change'));
 };
 
 pristine.addValidator(price, validatePrice);
@@ -63,5 +67,29 @@ roomNumber.addEventListener ('change', () => {
 // Отправка формы
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  //pristine.validate();
+  getData((d) => console.log(d), (e) => console.log(e));
 });
+
+// const setUserFormSubmit = (onSuccess, onFail) => {
+//   adForm.addEventListener('submit', (evt) => {
+//     evt.preventDefault();
+
+//     const isValid = pristine.validate();
+//     if (isValid) {
+//       blockSubmitBtn();
+//       sendData(
+//         () => {
+//           onSuccess();
+//           unblockSubmitBtn();
+//           getResetPage();
+//         },
+//         () => {
+//           onFail();
+//           unblockSubmitBtn();
+//         },
+//         new FormData(evt.target)
+//       );
+//     }
+//   });
+// };
