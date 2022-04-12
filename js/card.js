@@ -58,4 +58,4 @@ const createCard = (({offer: {title, address, price, type, rooms, guests, checki
   mapCanvas.appendChild(cardFragment);
 });
 
-export { createCard };
+export { createCard, housingTypes, renderPhotos };

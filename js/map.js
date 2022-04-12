@@ -1,6 +1,6 @@
 import { activePage } from './form.js';
 import { objList } from './data.js';
-import { createCard } from './card.js';
+import { housingTypes, renderPhotos} from './card.js';
 
 const adForm = document.querySelector('.ad-form');
 const CENTER_TOKYO = {
@@ -49,13 +49,16 @@ const mainPin = L.marker(
 );
 mainPin.addTo(map);
 
-// Возвращает метку на изначальную точку
-const resetButton = adForm.querySelector('button[type="reset"]');
+// Передача координат метки в поле адреса
+mainPin.on('move', (evt) => {
+  updateAddress(evt.target.getLatLng());
+});
 
 // Возвращение метки на исходные координаты
+const resetButton = document.querySelector('button[type="reset"]');
 const resetMainPin = (marker) => {
   marker.setLatLng(CENTER_TOKYO);
-  map.setView(CENTER_TOKYO, zoomMap);
+  map.setView(CENTER_TOKYO, 12);
 };
 
 const getResetForm = () => {
@@ -71,8 +74,34 @@ const pinIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
+const createPopup = (point) => {
+  const popup = document.querySelector('#card').content.querySelector('.popup');
+  const popupElement = popup.cloneNode(true);
+
+  popupElement.querySelector('.popup__title').textContent = point.offer.title;
+  popupElement.querySelector('.popup__text--address').textContent = point.offer.address;
+  popupElement.querySelector('.popup__text--price').textContent = `${point.offer.price} ₽/ночь`;
+  popupElement.querySelector('.popup__type').textContent = housingTypes[point.offer.type];
+  popupElement.querySelector('.popup__text--capacity').textContent = `${point.offer.rooms} комнаты для ${point.offer.guests} гостей`;
+  popupElement.querySelector('.popup__text--time').textContent = `Заезд после ${point.offer.checkin}, выезд до ${point.offer.checkout}`;
+  popupElement.querySelector('.popup__features').textContent = point.offer.features.join(', ');
+
+  popupElement.querySelector('.popup__description').textContent = point.offer.description;
+  if (point.offer.description.length === 0) {
+    point.offer.description.classList.add('.visually-hidden');
+  }
+
+  const photoCard = popupElement.querySelector('.popup__photos');
+  renderPhotos(point.offer.photos, photoCard);
+
+  popupElement.querySelector('.popup__avatar').src = point.author.avatar;
+
+  return popupElement;
+};
+
 //Добавляет новые метки
-objList.forEach(({location: {lat, lng}}) => {
+objList.forEach((item) => {
+  const {lat, lng} = item.location;
   const marker = L.marker(
     {
       lat,
@@ -85,5 +114,5 @@ objList.forEach(({location: {lat, lng}}) => {
 
   marker
     .addTo(map)
-    .bindPopup();
+    .bindPopup(createPopup(item));
 });

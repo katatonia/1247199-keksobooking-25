@@ -29,11 +29,6 @@ const disabledPage = () => {
 const activePage = () => {
   adForm.classList.remove('ad-form--disabled');
   mapFilters.classList.remove('map-filters--disabled');
-
-  setElementDisabled(fieldsets);
-
-  const mapFiltersArray = Array.from(mapFiltersElements);
-  setElementDisabled(mapFiltersArray);
 };
 
 export { disabledPage, activePage };
