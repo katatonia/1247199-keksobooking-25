@@ -1,5 +1,7 @@
-//import { blockSubmitBtn, unblockSubmitBtn } from "./util";
-import { sendData, getData } from "./server";
+import { blockSubmitBtn, unblockSubmitBtn } from './util.js';
+import { sendData } from './server.js';
+import { resetFilters, resetMap } from './map.js';
+import { showSuccessPopup, showErrorPopup } from './popup.js';
 
 const adForm = document.querySelector('.ad-form');
 
@@ -64,32 +66,47 @@ roomNumber.addEventListener ('change', () => {
   pristine.validate(capacity);
 });
 
-// Отправка формы
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  //pristine.validate();
-  getData((d) => console.log(d), (e) => console.log(e));
+// Сбрасывает поля формы
+const resetForm = () => {
+  const form = document.querySelector('.ad-form');
+  form.reset();
+};
+
+const getResetPage = () => {
+  resetFilters();
+  resetForm();
+  resetMap();
+};
+
+
+const resetBtn = document.querySelector('.ad-form__reset');
+resetBtn.addEventListener('click', () => {
+  resetForm();
+  resetMap();
 });
 
-// const setUserFormSubmit = (onSuccess, onFail) => {
-//   adForm.addEventListener('submit', (evt) => {
-//     evt.preventDefault();
+// Отправка формы
+const setUserFormSubmit = (onSuccess, onFail) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
 
-//     const isValid = pristine.validate();
-//     if (isValid) {
-//       blockSubmitBtn();
-//       sendData(
-//         () => {
-//           onSuccess();
-//           unblockSubmitBtn();
-//           getResetPage();
-//         },
-//         () => {
-//           onFail();
-//           unblockSubmitBtn();
-//         },
-//         new FormData(evt.target)
-//       );
-//     }
-//   });
-// };
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitBtn();
+      sendData(
+        () => {
+          onSuccess();
+          unblockSubmitBtn();
+          getResetPage();
+        },
+        () => {
+          onFail();
+          unblockSubmitBtn();
+        },
+        new FormData(evt.target)
+      );
+    }
+  });
+};
+
+setUserFormSubmit(showSuccessPopup, showErrorPopup);

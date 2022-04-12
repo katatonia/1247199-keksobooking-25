@@ -1,8 +1,6 @@
 import { activePage } from './form.js';
-import { objList } from './data.js';
 import { housingTypes, renderPhotos} from './card.js';
 import { getData } from './server.js';
-import { showAlert } from './util.js';
 
 const adForm = document.querySelector('.ad-form');
 const CENTER_TOKYO = {
@@ -76,25 +74,28 @@ const pinIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
+
 const createPopup = (point) => {
   const popup = document.querySelector('#card').content.querySelector('.popup');
   const popupElement = popup.cloneNode(true);
 
-  popupElement.querySelector('.popup__title').textContent = point.offer.title;
-  popupElement.querySelector('.popup__text--address').textContent = point.offer.address;
-  popupElement.querySelector('.popup__text--price').textContent = `${point.offer.price} ₽/ночь`;
-  popupElement.querySelector('.popup__type').textContent = housingTypes[point.offer.type];
-  popupElement.querySelector('.popup__text--capacity').textContent = `${point.offer.rooms} комнаты для ${point.offer.guests} гостей`;
-  popupElement.querySelector('.popup__text--time').textContent = `Заезд после ${point.offer.checkin}, выезд до ${point.offer.checkout}`;
-  popupElement.querySelector('.popup__features').textContent = point.offer.features.join(', ');
+  const { title = '', address = '', price = '', type = '', rooms = '', guests = '', checkin = '', checkout = '', features = [], description = '', photos = [] } = point.offer;
 
-  popupElement.querySelector('.popup__description').textContent = point.offer.description;
-  if (point.offer.description.length === 0) {
-    point.offer.description.classList.add('.visually-hidden');
+  popupElement.querySelector('.popup__title').textContent = title;
+  popupElement.querySelector('.popup__text--address').textContent = address;
+  popupElement.querySelector('.popup__text--price').textContent = `${price} ₽/ночь`;
+  popupElement.querySelector('.popup__type').textContent = housingTypes[type];
+  popupElement.querySelector('.popup__text--capacity').textContent = `${rooms} комнаты для ${guests} гостей`;
+  popupElement.querySelector('.popup__text--time').textContent = `Заезд после ${checkin}, выезд до ${checkout}`;
+  popupElement.querySelector('.popup__features').textContent = features.join(', ');
+
+  popupElement.querySelector('.popup__description').textContent = description;
+  if (description.length === 0 && description) {
+    description.classList.add('.visually-hidden');
   }
 
   const photoCard = popupElement.querySelector('.popup__photos');
-  renderPhotos(point.offer.photos, photoCard);
+  renderPhotos(photos, photoCard);
 
   popupElement.querySelector('.popup__avatar').src = point.author.avatar;
 
@@ -102,33 +103,34 @@ const createPopup = (point) => {
 };
 
 //Добавляет новые метки
-objList.forEach((item) => {
-  const {lat, lng} = item.location;
-  const marker = L.marker(
-    {
-      lat,
-      lng,
-    },
-    {
-      icon: pinIcon,
-    },
-  );
+getData((data) => {
+  data.forEach((item) => {
+    const {lat, lng} = item.location;
+    const marker = L.marker(
+      {
+        lat,
+        lng,
+      },
+      {
+        icon: pinIcon,
+      },
+    );
 
-  marker
-    .addTo(map)
-    .bindPopup(createPopup(item));
+    marker
+      .addTo(map)
+      .bindPopup(createPopup(item));
+  });
 });
 
-// Сбрасывает страницу
-// const getResetPage = () => {
-//   mainPin.setLatLng(CENTER_TOKYO);
-//   map.setView(CENTER_TOKYO, 12);
-//   adForm.reset();
-//   const adFormInputs = adForm.querySelectorAll('input');
-//   adFormInputs.forEach((input) => input.textContent = '');
-//   const resetMainPinMarker = mainPin.getLatLng();
-//   getAddressCoordinates(resetMainPinMarker);
-//   onTypeChange();
-//   mapFilters.reset();
-//   clearMarker();
-// };
+const resetFilters = () => {
+  const form = document.querySelector('.map__filters');
+  form.reset();
+};
+
+const resetMap = () => {
+  map.setView(CENTER_TOKYO, 12);
+  mainPin.setLatLng(CENTER_TOKYO);
+  map.closePopup();
+};
+
+export { resetFilters, resetMap };

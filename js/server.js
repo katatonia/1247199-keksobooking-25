@@ -13,7 +13,9 @@ const getData = (onSuccess, onFail) => {
       onSuccess(response);
     })
     .catch((err) => {
-      onFail(`Ошибка загрузки данных ${err}`);
+      if (onFail) {
+        onFail(`Ошибка загрузки данных ${err}`);
+      }
     });
 };
 

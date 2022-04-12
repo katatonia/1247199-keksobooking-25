@@ -47,14 +47,14 @@ const showAlert = (message) => {
 
 
 const submitButton = document.querySelector('.ad-form__submit');
-const blockSubmitButton = () => {
+const blockSubmitBtn = () => {
   submitButton.disabled = true;
   submitButton.textContent = 'Публикация...';
 };
 
-const unblockSubmitButton = () => {
+const unblockSubmitBtn = () => {
   submitButton.disabled = false;
   submitButton.textContent = 'Опубликовать';
 };
 
-export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitButton, unblockSubmitButton };
+export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitBtn, unblockSubmitBtn };
