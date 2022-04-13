@@ -6,7 +6,7 @@ const getRandomInt = (min, max) => {
   }
 };
 
-const getRandomFloat = (min, max, fraction = 1) => {
+const getRandomFloat = (min, max, fraction = 5) => {
   if (max <= min) {
     throw new Error('Неверный диапазон. Максимальное число не может быть меньше или равно минимальному.');
   }
@@ -23,4 +23,46 @@ const getRandomArray = (array) => {
   return randomArray;
 };
 
-export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray };
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '5';
+  alertContainer.style.position = 'absolute';
+  alertContainer.style.width = '500px';
+  alertContainer.style.right = '50%';
+  alertContainer.style.transform = 'translateX(50%)';
+  alertContainer.style.top = '55px';
+  alertContainer.style.padding = '10px 3px';
+  alertContainer.style.fontSize = '18px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = '#ff0000';
+  alertContainer.style.color = '#000000';
+  alertContainer.textContent = message;
+
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, 5000);
+};
+
+
+const submitButton = document.querySelector('.ad-form__submit');
+const blockSubmitBtn = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Публикация...';
+};
+
+const unblockSubmitBtn = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitBtn, unblockSubmitBtn, debounce };
