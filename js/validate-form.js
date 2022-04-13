@@ -40,8 +40,9 @@ const onChangeOfferType = function () {
   price.value = MinPrices[type.value];
   price.dispatchEvent(new Event('change'));
 };
+const getPriceErrorMessage = () => `Минимальная цена ${MinPrices[type.value]} руб.`;
 
-pristine.addValidator(price, validatePrice);
+pristine.addValidator(price, validatePrice, getPriceErrorMessage);
 type.addEventListener('change', onChangeOfferType);
 
 // Валидация полей с выбором количества комнат и мест
@@ -81,8 +82,8 @@ const getResetPage = () => {
 
 // Сброс по клику на кнопку
 const resetBtn = document.querySelector('.ad-form__reset');
-resetBtn.addEventListener('click', (e) => {
-  e.preventDefault();
+resetBtn.addEventListener('click', (evt) => {
+  evt.preventDefault();
 
   getResetPage();
 });

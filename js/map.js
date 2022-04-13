@@ -77,6 +77,7 @@ const pinIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
+// Создаёт балун с информацией о метке
 const createPopup = (point) => {
   const popup = document.querySelector('#card').content.querySelector('.popup');
   const popupElement = popup.cloneNode(true);
@@ -104,16 +105,58 @@ const createPopup = (point) => {
   return popupElement;
 };
 
-//Добавляет новые метки
+// Функции фильтрации
+const housingTypeFilter = (item) => {
+  const filter = document.getElementById('housing-type');
+  return filter.value === 'any' || item.offer.type === filter.value;
+};
+
+const housingPriceFilter = (item) => {
+  const filter = document.getElementById('housing-price');
+  const prices = {
+    'high': (p) => p >= 50000,
+    'middle': (p) => p >= 10000 && p <= 50000,
+    'low': (p) => p <= 10000,
+  };
+  return filter.value === 'any' || prices[filter.value](item.offer.price);
+};
+
+const housingRoomsFilter = (item) => {
+  const filter = document.getElementById('housing-rooms');
+  return filter.value === 'any' || item.offer.rooms === +filter.value;
+};
+
+const housingGuestsFilter = (item) => {
+  const filter = document.getElementById('housing-guests');
+  return filter.value === 'any' || item.offer.guests === +filter.value;
+};
+
+const housingFeaturesFilter = (item) => {
+  const filters = Array.from(document.querySelectorAll('#housing-features input'));
+  let result = true;
+  filters.filter(({checked}) => checked)
+    .forEach(({value}) => {
+      if (!item.offer.features || !item.offer.features.includes(value)) {
+        result = false;
+      }
+    });
+  return result;
+};
+
+// Создание меток
 const markers = [];
 const allMapData = [];
-const currentMapData = [];
 
-const submitFilters = (compFunc = () => true) => {
+const submitFilters = () => {
   markers.forEach((item) => map.removeLayer(item));
   markers.splice(0, markers.length);
 
-  currentMapData.filter(compFunc)
+  allMapData
+    .filter(housingTypeFilter)
+    .filter(housingPriceFilter)
+    .filter(housingRoomsFilter)
+    .filter(housingGuestsFilter)
+    .filter(housingFeaturesFilter)
     .slice(0, MAX_POINTS)
     .forEach((item) => {
       const { lat, lng } = item.location;
@@ -138,77 +181,41 @@ const debouncedSubmitFilters = debounce(submitFilters, 500);
 
 getData((data) => {
   data.forEach((item) => allMapData.push(item));
-  currentMapData.push(...allMapData);
   submitFilters();
 }, showAlert);
 
-// Фильтрация меток на карте
-const housingTypeFilter = document.getElementById('housing-type');
-housingTypeFilter.addEventListener('change', (e) => {
-  const { value } = e.target;
-  debouncedSubmitFilters((item) => value === 'any' || item.offer.type === value);
+// Фильтры
+const housingTypeFilterElement = document.getElementById('housing-type');
+housingTypeFilterElement.addEventListener('change', () => {
+  debouncedSubmitFilters();
 });
 
-const housingPriceFilter = document.getElementById('housing-price');
-housingPriceFilter.addEventListener('change', (e) => {
-  const { value } = e.target;
-  const prices = {
-    'high': (p) => p >= 50000,
-    'middle': (p) => p >= 10000 && p <= 50000,
-    'low': (p) => p <= 10000,
-  };
-  debouncedSubmitFilters((item) => {
-    if (value === 'any') {
-      return true;
-    }
-    return prices[value](item.offer.price);
+const housingPriceFilterElement = document.getElementById('housing-price');
+housingPriceFilterElement.addEventListener('change', () => {
+  debouncedSubmitFilters();
+});
+
+const housingRoomsFilterElement = document.getElementById('housing-rooms');
+housingRoomsFilterElement.addEventListener('change', () => {
+  debouncedSubmitFilters();
+});
+
+const housingGuestsFilterElement = document.getElementById('housing-guests');
+housingGuestsFilterElement.addEventListener('change', () => {
+  debouncedSubmitFilters();
+});
+
+const housingFeaturesFiltersElements = document.querySelectorAll('#housing-features input');
+housingFeaturesFiltersElements.forEach((filter) => {
+  filter.addEventListener('click', () => {
+    debouncedSubmitFilters();
   });
 });
 
-const housingRoomsFilter = document.getElementById('housing-rooms');
-housingRoomsFilter.addEventListener('change', (e) => {
-  const { value } = e.target;
-  debouncedSubmitFilters((item) => value === 'any' || item.offer.rooms === +value);
-});
-
-const housingGuestsFilter = document.getElementById('housing-guests');
-housingGuestsFilter.addEventListener('change', (e) => {
-  const { value } = e.target;
-  debouncedSubmitFilters((item) => value === 'any' || item.offer.guests === +value);
-});
-
-const featureFilters = {
-  'wifi': false,
-  'dishwasher': false,
-  'parking': false,
-  'washer': false,
-  'elevator': false,
-  'conditioner': false,
-};
-
-const housingFeaturesFilters = document.querySelectorAll('#housing-features input');
-housingFeaturesFilters.forEach((filter) => {
-  filter.addEventListener('click', (e) => {
-    const { value, checked } = e.target;
-
-    featureFilters[value] = checked;
-    const checkedFilters = Object.entries(featureFilters).filter(([, v]) => v).map(([k]) => k);
-    debouncedSubmitFilters((item) => {
-      if (!checkedFilters.length) {
-        return true;
-      }
-      if (!item.offer.features || !item.offer.features.length) {
-        return false;
-      }
-      return checkedFilters.every((elem) => item.offer.features.indexOf(elem) >= 0);
-    });
-  });
-});
-
+// Сброс фильтров и карты
 const resetFilters = () => {
   const form = document.querySelector('.map__filters');
   form.reset();
-  Object.keys(featureFilters).forEach((key) => { featureFilters[key] = false; });
   debouncedSubmitFilters();
   resetPictures();
 };

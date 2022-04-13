@@ -1,5 +1,4 @@
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
 const IMG_DEFAULT = {
   DESCRIPTION: 'Фото',
   SRC: 'img/muffin-grey.svg',
