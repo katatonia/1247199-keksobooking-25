@@ -1,10 +1,8 @@
-import { debounce, showAlert } from './util.js';
 import { activePage } from './form.js';
 import { housingTypes, renderPhotos} from './card.js';
-import { getData } from './server.js';
 import { resetPictures } from './upload.js';
+import { submitFilters } from './filters.js';
 
-const MAX_POINTS = 10;
 const adForm = document.querySelector('.ad-form');
 const CENTER_TOKYO = {
   lat: 35.69034,
@@ -105,121 +103,22 @@ const createPopup = (point) => {
   return popupElement;
 };
 
-// Функции фильтрации
-const housingTypeFilter = (item) => {
-  const filter = document.getElementById('housing-type');
-  return filter.value === 'any' || item.offer.type === filter.value;
-};
-
-const housingPriceFilter = (item) => {
-  const filter = document.getElementById('housing-price');
-  const prices = {
-    'high': (p) => p >= 50000,
-    'middle': (p) => p >= 10000 && p <= 50000,
-    'low': (p) => p <= 10000,
-  };
-  return filter.value === 'any' || prices[filter.value](item.offer.price);
-};
-
-const housingRoomsFilter = (item) => {
-  const filter = document.getElementById('housing-rooms');
-  return filter.value === 'any' || item.offer.rooms === +filter.value;
-};
-
-const housingGuestsFilter = (item) => {
-  const filter = document.getElementById('housing-guests');
-  return filter.value === 'any' || item.offer.guests === +filter.value;
-};
-
-const housingFeaturesFilter = (item) => {
-  const filters = Array.from(document.querySelectorAll('#housing-features input'));
-  let result = true;
-  filters.filter(({checked}) => checked)
-    .forEach(({value}) => {
-      if (!item.offer.features || !item.offer.features.includes(value)) {
-        result = false;
-      }
-    });
-  return result;
-};
-
 // Создание меток
 const markers = [];
-const allMapData = [];
 
-const submitFilters = () => {
+const cleanMapMarkers = () => {
   markers.forEach((item) => map.removeLayer(item));
   markers.splice(0, markers.length);
-
-  allMapData
-    .filter(housingTypeFilter)
-    .filter(housingPriceFilter)
-    .filter(housingRoomsFilter)
-    .filter(housingGuestsFilter)
-    .filter(housingFeaturesFilter)
-    .slice(0, MAX_POINTS)
-    .forEach((item) => {
-      const { lat, lng } = item.location;
-      const marker = L.marker(
-        {
-          lat,
-          lng,
-        },
-        {
-          icon: pinIcon,
-        },
-      );
-
-      marker
-        .addTo(map)
-        .bindPopup(createPopup(item));
-      markers.push(marker);
-    });
 };
 
-const debouncedSubmitFilters = debounce(submitFilters, 500);
-
-getData((data) => {
-  data.forEach((item) => allMapData.push(item));
-  submitFilters();
-}, showAlert);
-
-// Фильтры
-const housingTypeFilterElement = document.getElementById('housing-type');
-housingTypeFilterElement.addEventListener('change', () => {
-  debouncedSubmitFilters();
-});
-
-const housingPriceFilterElement = document.getElementById('housing-price');
-housingPriceFilterElement.addEventListener('change', () => {
-  debouncedSubmitFilters();
-});
-
-const housingRoomsFilterElement = document.getElementById('housing-rooms');
-housingRoomsFilterElement.addEventListener('change', () => {
-  debouncedSubmitFilters();
-});
-
-const housingGuestsFilterElement = document.getElementById('housing-guests');
-housingGuestsFilterElement.addEventListener('change', () => {
-  debouncedSubmitFilters();
-});
-
-const housingFeaturesFiltersElements = document.querySelectorAll('#housing-features input');
-housingFeaturesFiltersElements.forEach((filter) => {
-  filter.addEventListener('click', () => {
-    debouncedSubmitFilters();
-  });
-});
-
-// Сброс фильтров и карты
-const resetFilters = () => {
-  const form = document.querySelector('.map__filters');
-  form.reset();
-  debouncedSubmitFilters();
-  resetPictures();
+const addMarkerToMap = (data) => {
+  const { lat, lng } = data.location;
+  const marker = L.marker({ lat, lng }, { icon: pinIcon });
+  marker.addTo(map).bindPopup(createPopup(data));
+  markers.push(marker);
 };
 
+// Сброс карты
 const resetMap = () => {
   map.setView(CENTER_TOKYO, 12);
   mainPin.setLatLng(CENTER_TOKYO);
@@ -227,4 +126,4 @@ const resetMap = () => {
   resetPictures();
 };
 
-export { resetFilters, resetMap };
+export { resetMap, submitFilters, cleanMapMarkers, addMarkerToMap };
