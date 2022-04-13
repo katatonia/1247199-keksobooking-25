@@ -1,3 +1,6 @@
+const DELAY_TIME = 5000;
+const RERENDER_DELAY = 500;
+
 const getRandomInt = (min, max) => {
   if (max <= min) {
     throw new Error('Неверный диапазон. Максимальное число не может быть меньше или равно минимальному.');
@@ -6,22 +9,7 @@ const getRandomInt = (min, max) => {
   }
 };
 
-const getRandomFloat = (min, max, fraction = 5) => {
-  if (max <= min) {
-    throw new Error('Неверный диапазон. Максимальное число не может быть меньше или равно минимальному.');
-  }
-
-  const exponentiating = 10 ** fraction;
-  return Math.floor((Math.random() * (max - min) + min) * exponentiating) / exponentiating;
-};
-
 const getRandomArrayElement = (array) => array[getRandomInt(0, array.length - 1)];
-
-const getRandomArray = (array) => {
-  const newArray = new Array (getRandomInt(1, array.length)).fill(' ').map(() => (getRandomArrayElement(array)));
-  const randomArray = [...new Set (newArray)];
-  return randomArray;
-};
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -42,7 +30,7 @@ const showAlert = (message) => {
 
   setTimeout(() => {
     alertContainer.remove();
-  }, 5000);
+  }, DELAY_TIME);
 };
 
 
@@ -57,7 +45,7 @@ const unblockSubmitBtn = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-const debounce = (callback, timeoutDelay = 500) => {
+const debounce = (callback, timeoutDelay = RERENDER_DELAY ) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
@@ -65,4 +53,12 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-export { getRandomInt, getRandomFloat, getRandomArrayElement, getRandomArray, showAlert, blockSubmitBtn, unblockSubmitBtn, debounce };
+export {
+  getRandomInt,
+  getRandomArrayElement,
+  showAlert,
+  blockSubmitBtn,
+  unblockSubmitBtn,
+  debounce,
+  RERENDER_DELAY
+};

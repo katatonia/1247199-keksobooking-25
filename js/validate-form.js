@@ -1,6 +1,7 @@
 import { blockSubmitBtn, unblockSubmitBtn } from './util.js';
 import { sendData } from './server.js';
-import { resetFilters, resetMap } from './map.js';
+import { resetMap } from './map.js';
+import { resetFilters } from './filters.js';
 import { showSuccessPopup, showErrorPopup } from './popup.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -32,9 +33,7 @@ const MinPrices = {
   'palace': 10000
 };
 
-const validatePrice = function (value) {
-  return MinPrices[type.value] <= (value.length && parseInt(value, 10)) && (value.length && parseInt(value, 10)) <= 100000;
-};
+const validatePrice = (value) => MinPrices[type.value] <= (value.length && parseInt(value, 10)) && (value.length && parseInt(value, 10)) <= 100000;
 
 const onChangeOfferType = function () {
   price.value = MinPrices[type.value];
