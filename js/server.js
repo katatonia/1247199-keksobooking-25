@@ -1,5 +1,5 @@
 const DATA = 'https://25.javascript.htmlacademy.pro/keksobooking/data';
-const SERVER = 'https://25.javascript.htmlacademy.pro/keksobooking ';
+const SERVER = 'https://25.javascript.htmlacademy.pro/keksobooking';
 
 const getData = (onSuccess, onFail) => {
   fetch(DATA)
